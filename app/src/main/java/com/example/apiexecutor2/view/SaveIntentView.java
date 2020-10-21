@@ -32,6 +32,7 @@ public class SaveIntentView extends View {
         windowManager.getDefaultDisplay().getSize(point);
 
         width = 75;
+//        width = WindowManager.LayoutParams.MATCH_PARENT;
         height = 75;
     }
 

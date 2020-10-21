@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 
 import com.alibaba.fastjson.JSONArray;
@@ -30,6 +31,8 @@ public class MyTextWatcher implements TextWatcher {
      */
     private JSONObject writeInfo(View view, String text){
         JSONObject json = new JSONObject();
+        String packageName = view.getContext().getPackageName();
+        json.put("packageName",packageName);
         json.put("callerClassName",this.getClass().getName());
 
         json.put("methodName","setText");
@@ -76,11 +79,16 @@ public class MyTextWatcher implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
+//        Log.i("LZH","input text: "+s.toString());
         //如果不是用户点击的View产生的文本变化，则忽略
         if(view!=TouchedView.getView()){
             return;
         }
-        String info = writeInfo(view,s.toString()).toJSONString();
+
+        JSONObject jsonObject = writeInfo(view,s.toString());
+        JSONArray snapShot = ViewUtil.getSnapShotOfWindow(view.getContext());
+        addSnapShot(jsonObject,snapShot);
+        String info = jsonObject.toJSONString();
         if(logWriter!=null){
             logWriter.writeLog("before: "+info);
         }
@@ -88,8 +96,21 @@ public class MyTextWatcher implements TextWatcher {
             logWriter.writeLog("after: "+info);
         }
     }
+
+    /**
+     * add snapshot to jsonObject
+     * @param jsonObject
+     * @param jsonArray
+     */
+    private void addSnapShot(JSONObject jsonObject,JSONArray jsonArray){
+        jsonObject.put("structure",jsonArray);
+    }
     private JSONObject getViewInfoJSON(View view){
         JSONObject jsonObject = new JSONObject();
+        jsonObject.put(ViewUtil.VIEW_X,ViewUtil.obtainX(view));
+        jsonObject.put(ViewUtil.VIEW_Y,ViewUtil.obtainY(view));
+        jsonObject.put(ViewUtil.VIEW_WIDTH,ViewUtil.obtainWidth(view));
+        jsonObject.put(ViewUtil.VIEW_HEIGHT,ViewUtil.obtainHeight(view));
         jsonObject.put("viewId",view.getId());
         jsonObject.put("viewPath", ViewUtil.getViewPath(view));
         return jsonObject;

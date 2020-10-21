@@ -1,9 +1,11 @@
 package com.example.apiexecutor2.xposed.event;
 
 import android.app.Activity;
+import android.content.ComponentCallbacks;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.Environment;
 import android.util.Log;
 

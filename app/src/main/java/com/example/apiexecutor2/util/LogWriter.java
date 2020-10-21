@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class LogWriter {
     private static File file;
-    private static BufferedWriter writer;
+    public static BufferedWriter writer;
     private static volatile LogWriter logWriter;
     private static String fName = Environment.getExternalStorageDirectory().getAbsolutePath()+"/methodLog.txt";
     private static boolean token = false;//是否可以写入日志的标志
@@ -57,6 +57,7 @@ public class LogWriter {
         if(!token){
             return;
         }
+//        Log.i("LZH",log);
         list.add(log);
     }
 
@@ -93,6 +94,5 @@ public class LogWriter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

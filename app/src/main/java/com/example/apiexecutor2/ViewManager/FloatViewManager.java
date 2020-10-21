@@ -42,7 +42,7 @@ public class FloatViewManager {
             layoutParams.height = saveIntentView.height;
             layoutParams.gravity = Gravity.BOTTOM|Gravity.LEFT;
             if (Build.VERSION.SDK_INT > 24) {
-                layoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+                layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
             } else {
                 layoutParams.type = WindowManager.LayoutParams.TYPE_TOAST;
             }
@@ -65,6 +65,7 @@ public class FloatViewManager {
                 //发送记录Log的通知
                 intent.setAction(LocalActivityReceiver.WRITE_LOG);
                 context.sendBroadcast(intent);
+                Log.i("LZH", "Record: "+System.currentTimeMillis());
             }
         });
     }

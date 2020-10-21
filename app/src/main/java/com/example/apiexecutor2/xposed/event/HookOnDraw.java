@@ -35,13 +35,15 @@ public class HookOnDraw extends XC_MethodHook {
     @Override
     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
         View view = (View) param.thisObject;
+//        Log.i("LZH",view.getRootView().getClass().getName());
         Activity activity = getActivity(view);
         if(view!=null&&view instanceof TextView){
+            Log.i("LZH","find textView");
             if(!checkIsSetTextWatcher((TextView) view)){
+                Log.i("LZH","add TextWatcher");
                 ((TextView) view).addTextChangedListener(new MyTextWatcher(view));
             }
         }
-
     }
     private Activity getActivity(View view){
         if(view!=null){

@@ -1,17 +1,23 @@
 package com.example.apiexecutor2.xposed.event;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.apiexecutor2.listener.TouchedView;
+import com.example.apiexecutor2.util.ActivityUtil;
 import com.example.apiexecutor2.util.LogWriter;
 import com.example.apiexecutor2.util.ViewUtil;
+
+import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
 
@@ -27,17 +33,35 @@ public class DispatchTouchEventHook extends XC_MethodHook {
         MotionEvent motionEvent = (MotionEvent) param.args[0];
         JSONObject jsonObject = null;
         Object obj =  param.thisObject;
+        Context context = null;
         if(obj instanceof View){
             View view = (View) obj;
+            context = view.getContext();
             jsonObject = writeInfo(view,motionEvent);
             writeThreadId(jsonObject);
             writeViewInfo(jsonObject,view);
             writeViewFlag(jsonObject,view);
             writeActivityID(jsonObject,view);
+            if(view.getRootView().getClass().getName().contains("PopupDecorView")){
+                JSONArray snapShot = ViewUtil.getSnapShotOfWindow(view.getContext());
+                addSnapShot(jsonObject,snapShot);
+            }
+            Log.i("LZH","view name: "+view.getClass().getName());
+//            Log.i("LZH","view activity: "+ActivityUtil.getActivity(view));
+//            Log.i("LZH","view context name: "+view.getContext().getClass().getName());
             logWriter.writeLog("before: "+jsonObject.toJSONString());
         }else if(obj instanceof Activity){
             Activity activity = (Activity) obj;
+//            String topActivity = ActivityUtil.getTopActivityName(activity);
+//            Log.i("LZH","top activity: "+ topActivity);
+//            Log.i("LZH", "click activity "+activity.getClass().getName()+" rootViewHashCode: "+activity.getWindow().getDecorView().hashCode());
+//            Log.i("LZH","activity view num: "+ViewUtil.getViewNum(activity.getWindow().getDecorView()));
+//            printParentClass(activity.getClass());
+//            context = activity.getApplicationContext();
             jsonObject = writeActivityInfo(activity,motionEvent);
+            JSONArray snapShot = ViewUtil.getSnapShotOfWindow(activity);
+            addSnapShot(jsonObject,snapShot);
+            Log.i("LZH", "before activity dispatchTouchEvent: "+activity.getClass().getName());
             logWriter.writeLog("before: "+jsonObject.toJSONString());
         }
 
@@ -60,15 +84,35 @@ public class DispatchTouchEventHook extends XC_MethodHook {
             writeViewFlag(json,view);
             writeActivityID(json,view);
 //            Log.i("LZH-Method","after: "+json.toJSONString());
+            //如果是PopupDecorView要保存当前的视图结构，因为它的点击事件不是通过Activity传递
+            if(view.getRootView().getClass().getName().contains("PopupDecorView")){
+                JSONArray snapShot = ViewUtil.getSnapShotOfWindow(view.getContext());
+                addSnapShot(json,snapShot);
+            }
             logWriter.writeLog("after: "+json.toJSONString());
+//            Log.i("LZH",view.getRootView().getClass().getName());
         }else if(obj instanceof Activity){
             Activity activity = (Activity) obj;
             JSONObject jsonObject = writeActivityInfo(activity,motionEvent);
+            JSONArray snapShot = ViewUtil.getSnapShotOfWindow(activity);
+            addSnapShot(jsonObject,snapShot);
             logWriter.writeLog("after: "+jsonObject.toJSONString());
+            Log.i("LZH","after activity dispatchTouchEvent: "+activity.getClass().getName());
         }
+    }
+
+    /**
+     * add the snapshot of window to jsonObject
+     * @param jsonObject
+     * @param snapShot
+     */
+    private void addSnapShot(JSONObject jsonObject,JSONArray snapShot){
+        jsonObject.put("structure",snapShot);
     }
     private JSONObject writeActivityInfo(Activity activity, MotionEvent motionEvent){
         JSONObject json = new JSONObject();
+        String packageName = activity.getPackageName();
+        json.put("packageName",packageName);
         json.put("callerClassName",activity.getClass().getName());
         json.put("methodName","dispatchTouchEvent");
         JSONObject itemJSON = new JSONObject();
@@ -99,6 +143,8 @@ public class DispatchTouchEventHook extends XC_MethodHook {
      */
     private JSONObject writeInfo(View view, MotionEvent motionEvent){
         JSONObject json = new JSONObject();
+        String packageName = view.getContext().getPackageName();
+        json.put("packageName",packageName);
         json.put("callerClassName",view.getClass().getName());
         json.put("methodName","dispatchTouchEvent");
 
@@ -154,6 +200,18 @@ public class DispatchTouchEventHook extends XC_MethodHook {
      */
     private void writeViewInfo(JSONObject json, View view){
         JSONObject viewInfo = new JSONObject();
+        int pos[] = new int[2];
+        view.getLocationInWindow(pos);
+        float dpPos[] = new float[2];
+        DisplayMetrics displayMetrics = view.getContext().getResources().getDisplayMetrics();
+        dpPos[0] = (pos[0]/displayMetrics.density);
+        dpPos[1] = (pos[1]/displayMetrics.density);
+        int width = (int) (view.getWidth()/displayMetrics.density);
+        int height = (int) (view.getHeight()/displayMetrics.density);
+        viewInfo.put("viewX",dpPos[0]);
+        viewInfo.put("viewY",dpPos[1]);
+        viewInfo.put("viewWidth",width);
+        viewInfo.put("viewHeight",height);
         viewInfo.put("viewId",view.getId());
         viewInfo.put("viewPath", ViewUtil.getViewPath(view));
         json.put("viewInfo",viewInfo);
@@ -167,5 +225,12 @@ public class DispatchTouchEventHook extends XC_MethodHook {
     }
     private void writeActivityID(JSONObject json, View view){
         json.put("ActivityID",ViewUtil.getActivityNameByView(view));
+    }
+
+    private void printParentClass(Class clazz){
+        Class parentClazz = clazz.getSuperclass();
+        Log.i("LZH","parent: "+parentClazz.getName());
+        printParentClass(parentClazz);
+
     }
 }

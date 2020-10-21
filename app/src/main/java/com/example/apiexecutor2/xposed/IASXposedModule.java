@@ -2,6 +2,7 @@ package com.example.apiexecutor2.xposed;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 
 import com.example.apiexecutor2.xposed.event.ActivityOnCreateHook;
+import com.example.apiexecutor2.xposed.event.ActivityOnResumeHook;
 import com.example.apiexecutor2.xposed.event.DispatchTouchEventHook;
 import com.example.apiexecutor2.xposed.event.HookOnDraw;
 
@@ -40,9 +42,19 @@ public class IASXposedModule implements IXposedHookLoadPackage{
 //        XposedHelpers.findAndHookMethod("android.view.View",lpparam.classLoader,"onDraw",Canvas.class,new ViewOnDraw());
         Log.i("LZH","Loaded app: "+lpparam.packageName);
         XposedHelpers.findAndHookMethod("android.app.Activity", lpparam.classLoader, "onCreate", Bundle.class, new ActivityOnCreateHook(lpparam));
-        if(lpparam.packageName.equals("com.starbucks.cn")){
-            //com.starbucks.cn com.ichi2.anki com.douban.movie
-            Log.i("LZH","start hook");
+        XposedHelpers.findAndHookMethod("android.app.Activity", lpparam.classLoader, "onResume", new ActivityOnResumeHook());
+        if(lpparam.packageName.equals("com.ichi2.anki")){
+            //com.xiachufang.lazycook
+            //com.starbucks.cn com.ichi2.anki com.douban.movie com.tencent.qqmusic
+            //com.smartisan.notes com.netease.pris me.zhouzhuo810.zznote
+            //com.wondertek.paper com.netease.cloudmusic com.boohee.food
+            //com.boohee.one com.example.refrigerator com.jnzc.shipudaquan
+            //com.sdu.didi.psnger com.lianjia.beike com.mfw.roadbook
+            //com.sogou.map.android.maps com.dp.android.elong
+            //com.mfw.roadbook com.tuniu.app.ui com.gift.android
+            //com.dragon.read com.sina.news com.kmxs.reader
+            //bubei.tingshu com.kuaikan.comic com.tencent.news
+            //com.netease.pris com.xiangha
             initHook(lpparam);
         }
     }

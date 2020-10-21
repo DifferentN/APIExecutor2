@@ -13,7 +13,7 @@ public class ScrollComputeScrollOffset extends XC_MethodHook {
         Object obj = param.thisObject;
         boolean res = (boolean) param.getResult();
         if(!res){
-            Log.i("LZH","scroll finish");
+//            Log.i("LZH","scroll finish");
         }
         relationRecog.recordScrollView(obj);
     }
