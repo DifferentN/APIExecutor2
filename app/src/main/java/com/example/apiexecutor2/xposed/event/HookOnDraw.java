@@ -36,7 +36,8 @@ public class HookOnDraw extends XC_MethodHook {
     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
         View view = (View) param.thisObject;
 //        Log.i("LZH",view.getRootView().getClass().getName());
-        Activity activity = getActivity(view);
+//        Activity activity = getActivity(view);
+        Log.i("LZH","onDraw view name: "+view.getClass().getName());
         if(view!=null&&view instanceof TextView){
             Log.i("LZH","find textView");
             if(!checkIsSetTextWatcher((TextView) view)){

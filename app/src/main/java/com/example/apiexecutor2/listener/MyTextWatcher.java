@@ -84,7 +84,7 @@ public class MyTextWatcher implements TextWatcher {
         if(view!=TouchedView.getView()){
             return;
         }
-
+        Log.i("LZH","get Input: "+s.toString());
         JSONObject jsonObject = writeInfo(view,s.toString());
         JSONArray snapShot = ViewUtil.getSnapShotOfWindow(view.getContext());
         addSnapShot(jsonObject,snapShot);

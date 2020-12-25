@@ -5,18 +5,23 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.example.apiexecutor2.listener.MyTextWatcher;
 import com.example.apiexecutor2.listener.TouchedView;
 import com.example.apiexecutor2.util.ActivityUtil;
 import com.example.apiexecutor2.util.LogWriter;
 import com.example.apiexecutor2.util.ViewUtil;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import de.robv.android.xposed.XC_MethodHook;
@@ -36,6 +41,10 @@ public class DispatchTouchEventHook extends XC_MethodHook {
         Context context = null;
         if(obj instanceof View){
             View view = (View) obj;
+            //添加输入监听器
+            if(view instanceof TextView){
+                addTextWatcher((TextView) view);
+            }
             context = view.getContext();
             jsonObject = writeInfo(view,motionEvent);
             writeThreadId(jsonObject);
@@ -46,7 +55,7 @@ public class DispatchTouchEventHook extends XC_MethodHook {
                 JSONArray snapShot = ViewUtil.getSnapShotOfWindow(view.getContext());
                 addSnapShot(jsonObject,snapShot);
             }
-            Log.i("LZH","view name: "+view.getClass().getName());
+//            Log.i("LZH","view name: "+view.getClass().getName());
 //            Log.i("LZH","view activity: "+ActivityUtil.getActivity(view));
 //            Log.i("LZH","view context name: "+view.getContext().getClass().getName());
             logWriter.writeLog("before: "+jsonObject.toJSONString());
@@ -99,6 +108,35 @@ public class DispatchTouchEventHook extends XC_MethodHook {
             logWriter.writeLog("after: "+jsonObject.toJSONString());
             Log.i("LZH","after activity dispatchTouchEvent: "+activity.getClass().getName());
         }
+    }
+
+    private void addTextWatcher(TextView textView){
+        if(!checkIsSetTextWatcher(textView)){
+            textView.addTextChangedListener(new MyTextWatcher(textView));
+        }
+    }
+
+    /**
+     * 检查textView是否添加了MyTextWatcher
+     * @param textView
+     * @return true表示已经添加，false表示未添加
+     */
+    private boolean checkIsSetTextWatcher(TextView textView){
+        Class clazz = TextView.class;
+        try {
+            Field listenersField = clazz.getDeclaredField("mListeners");
+            ArrayList<TextWatcher> listeners = (ArrayList<TextWatcher>) listenersField.get(textView);
+            for(TextWatcher textWatcher:listeners){
+                if(textWatcher instanceof MyTextWatcher){
+                    return true;
+                }
+            }
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**

@@ -43,7 +43,7 @@ public class IASXposedModule implements IXposedHookLoadPackage{
         Log.i("LZH","Loaded app: "+lpparam.packageName);
         XposedHelpers.findAndHookMethod("android.app.Activity", lpparam.classLoader, "onCreate", Bundle.class, new ActivityOnCreateHook(lpparam));
         XposedHelpers.findAndHookMethod("android.app.Activity", lpparam.classLoader, "onResume", new ActivityOnResumeHook());
-        if(lpparam.packageName.equals("com.ichi2.anki")){
+        if(lpparam.packageName.equals("bubei.tingshu")){
             //com.xiachufang.lazycook
             //com.starbucks.cn com.ichi2.anki com.douban.movie com.tencent.qqmusic
             //com.smartisan.notes com.netease.pris me.zhouzhuo810.zznote
@@ -59,34 +59,34 @@ public class IASXposedModule implements IXposedHookLoadPackage{
         }
     }
     private void initHook(XC_LoadPackage.LoadPackageParam lpparam){
-        XposedHelpers.findAndHookMethod("android.animation.ValueAnimator",lpparam.classLoader,"addUpdateListener",
-                ValueAnimator.AnimatorUpdateListener.class,new ValueAnimatorAddUpdateListener());
-        XposedHelpers.findAndHookMethod("android.view.View",lpparam.classLoader,"postInvalidateDelayed",long.class,new ViewInvalidate());
-        XposedHelpers.findAndHookMethod("android.view.View",lpparam.classLoader,"invalidateInternal",int.class,int.class,int.class,int.class,
-                boolean.class,boolean.class,new ViewInvalidate());
-
-        //类名视具体情况而定
-        //android.support.v4.widget.DrawerLayout
-        XposedHelpers.findAndHookMethod("android.view.View",lpparam.classLoader,"computeScroll",new ViewComputeScroll());
-        XposedHelpers.findAndHookMethod("android.widget.OverScroller",lpparam.classLoader,"computeScrollOffset",new ScrollComputeScrollOffset());
-        XposedHelpers.findAndHookMethod("android.widget.Scroller",lpparam.classLoader,"computeScrollOffset",new ScrollComputeScrollOffset());
-
-        //同时监听ViewPropertyAnimator动画是否完成
-        XposedHelpers.findAndHookMethod("android.view.View",lpparam.classLoader,"animate",new ViewAnimate());
-        XposedHelpers.findAndHookMethod("android.view.ViewPropertyAnimator",lpparam.classLoader,"setListener", Animator.AnimatorListener.class,new ViewPropertySetAnimatorListener());
-
-        //监听valueAnimator/ObjectAnimator是否完成
-        //注意版本不同,mumu为6.0版本，endAnimation需要参数
-        hookMethod(ValueAnimator.class,"endAnimation");
-        //监听view的补间动画是否完成
-        XposedHelpers.findAndHookMethod("android.view.View",lpparam.classLoader,"applyLegacyAnimation",ViewGroup.class,long.class,Animation.class,boolean.class,new ViewApplyLegacyAnimation());
-        //监听view的滑动是否完成
-        XposedHelpers.findAndHookMethod("android.widget.Scroller",lpparam.classLoader,"computeScrollOffset",new HookScrollerOverScroller());
-        XposedHelpers.findAndHookMethod("android.widget.OverScroller",lpparam.classLoader,"computeScrollOffset",new HookScrollerOverScroller());
+//        XposedHelpers.findAndHookMethod("android.animation.ValueAnimator",lpparam.classLoader,"addUpdateListener",
+//                ValueAnimator.AnimatorUpdateListener.class,new ValueAnimatorAddUpdateListener());
+//        XposedHelpers.findAndHookMethod("android.view.View",lpparam.classLoader,"postInvalidateDelayed",long.class,new ViewInvalidate());
+//        XposedHelpers.findAndHookMethod("android.view.View",lpparam.classLoader,"invalidateInternal",int.class,int.class,int.class,int.class,
+//                boolean.class,boolean.class,new ViewInvalidate());
+//
+//        //类名视具体情况而定
+//        //android.support.v4.widget.DrawerLayout
+//        XposedHelpers.findAndHookMethod("android.view.View",lpparam.classLoader,"computeScroll",new ViewComputeScroll());
+//        XposedHelpers.findAndHookMethod("android.widget.OverScroller",lpparam.classLoader,"computeScrollOffset",new ScrollComputeScrollOffset());
+//        XposedHelpers.findAndHookMethod("android.widget.Scroller",lpparam.classLoader,"computeScrollOffset",new ScrollComputeScrollOffset());
+//
+//        //同时监听ViewPropertyAnimator动画是否完成
+//        XposedHelpers.findAndHookMethod("android.view.View",lpparam.classLoader,"animate",new ViewAnimate());
+//        XposedHelpers.findAndHookMethod("android.view.ViewPropertyAnimator",lpparam.classLoader,"setListener", Animator.AnimatorListener.class,new ViewPropertySetAnimatorListener());
+//
+//        //监听valueAnimator/ObjectAnimator是否完成
+//        //注意版本不同,mumu为6.0版本，endAnimation需要参数
+//        hookMethod(ValueAnimator.class,"endAnimation");
+//        //监听view的补间动画是否完成
+//        XposedHelpers.findAndHookMethod("android.view.View",lpparam.classLoader,"applyLegacyAnimation",ViewGroup.class,long.class,Animation.class,boolean.class,new ViewApplyLegacyAnimation());
+//        //监听view的滑动是否完成
+//        XposedHelpers.findAndHookMethod("android.widget.Scroller",lpparam.classLoader,"computeScrollOffset",new HookScrollerOverScroller());
+//        XposedHelpers.findAndHookMethod("android.widget.OverScroller",lpparam.classLoader,"computeScrollOffset",new HookScrollerOverScroller());
 
         XposedHelpers.findAndHookMethod("android.app.Activity",lpparam.classLoader,"dispatchTouchEvent",MotionEvent.class,new DispatchTouchEventHook());
         XposedHelpers.findAndHookMethod("android.view.View",lpparam.classLoader,"dispatchTouchEvent",MotionEvent.class,new DispatchTouchEventHook());
-        XposedHelpers.findAndHookMethod("android.view.View", lpparam.classLoader, "onDraw",Canvas.class, new HookOnDraw());
+//        XposedHelpers.findAndHookMethod("android.view.View", lpparam.classLoader, "draw",Canvas.class, new HookOnDraw());
         Log.i("LZH","hook init end");
     }
 

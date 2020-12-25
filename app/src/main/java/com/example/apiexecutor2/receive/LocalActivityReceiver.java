@@ -63,7 +63,7 @@ public class LocalActivityReceiver extends BroadcastReceiver{
                 //com.kmxs.reader bubei.tingshu com.kuaikan.comic
                 //com.tencent.news com.xiangha com.jnzc.shipudaquan
                 //com.xiachufang.lazycook
-                if(selfPackageName.contains("com.ichi2.anki")){
+                if(selfPackageName.contains("bubei.tingshu")){
                     //设置LogWriter可以写入日志
                     LogWriter.turnWriteAble();
                     if(selfActivityName.equals(showActivityName)){
