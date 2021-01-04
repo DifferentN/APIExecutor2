@@ -90,6 +90,7 @@ public class MyTextWatcher implements TextWatcher {
         addSnapShot(jsonObject,snapShot);
         String info = jsonObject.toJSONString();
         if(logWriter!=null){
+            Log.i("LZH","write input: "+s.toString());
             logWriter.writeLog("before: "+info);
         }
         if(logWriter!=null){

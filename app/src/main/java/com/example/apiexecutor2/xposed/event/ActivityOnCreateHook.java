@@ -80,6 +80,7 @@ public class ActivityOnCreateHook extends XC_MethodHook {
         //        com.jnzc.shipudaquan
 //        fileName = Environment.getExternalStorageDirectory().getAbsolutePath()+"/shipudaquan.txt";
 //        if(activity.getPackageName().contains("com.jnzc.shipudaquan")){
+//            showClassName("com.jnzc.shipudaquan",activity);
 //            writeAnkiClassName("com.jnzc.shipudaquan",activity,fileName);
 //            Log.i("LZH","write className finish ");
 //        }

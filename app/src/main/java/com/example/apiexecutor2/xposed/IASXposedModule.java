@@ -43,7 +43,8 @@ public class IASXposedModule implements IXposedHookLoadPackage{
         Log.i("LZH","Loaded app: "+lpparam.packageName);
         XposedHelpers.findAndHookMethod("android.app.Activity", lpparam.classLoader, "onCreate", Bundle.class, new ActivityOnCreateHook(lpparam));
         XposedHelpers.findAndHookMethod("android.app.Activity", lpparam.classLoader, "onResume", new ActivityOnResumeHook());
-        if(lpparam.packageName.equals("bubei.tingshu")){
+        if(lpparam.packageName.equals("com.dragon.read")||
+            lpparam.packageName.equals("bubei.tingshu")){
             //com.xiachufang.lazycook
             //com.starbucks.cn com.ichi2.anki com.douban.movie com.tencent.qqmusic
             //com.smartisan.notes com.netease.pris me.zhouzhuo810.zznote

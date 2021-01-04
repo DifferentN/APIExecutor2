@@ -5,8 +5,10 @@ import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,8 +34,9 @@ public class LogWriter {
             }
         }
         try {
-            FileWriter fileWriter = new FileWriter(file);
-            writer = new BufferedWriter(fileWriter);
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file),
+                    "UTF-8");
+            writer = new BufferedWriter(outputStreamWriter);
         } catch (IOException e) {
             e.printStackTrace();
         }
